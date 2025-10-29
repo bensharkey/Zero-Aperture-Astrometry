@@ -55,7 +55,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <form method="post" action="{{ url_for('select_group') }}" class="row g-2 align-items-end">
+        <form method="post" action="{{ url_for('main.select_group') }}" class="row g-2 align-items-end">
             <div class="col-sm-8">
                 <select class="form-select" id="selected_obstime" name="selected_obstime">
                     <option value="">-- None --</option>
@@ -82,7 +82,7 @@
     {% if selected_count is not none %}
     <span class="badge bg-secondary ms-2">{{ selected_count }} rows</span>
     {% endif %}
-    <form method="post" action="{{ url_for('select_group') }}" class="d-inline ms-2">
+    <form method="post" action="{{ url_for('main.select_group') }}" class="d-inline ms-2">
         <input type="hidden" name="selected_obstime" value="">
         <button class="btn btn-sm btn-outline-secondary">Clear</button>
     </form>
@@ -94,7 +94,7 @@
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Manage Selected obstime Group</h5>
         <div>
-            <form method="post" action="{{ url_for('clear_exclusions') }}" class="d-inline">
+            <form method="post" action="{{ url_for('main.clear_exclusions') }}" class="d-inline">
                 <input type="hidden" name="obstime" value="{{ selected_obstime }}">
                 <button type="submit" class="btn btn-sm btn-outline-danger">Clear Exclusions</button>
             </form>
@@ -110,7 +110,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <form method="post" action="{{ url_for('update_exclusions') }}">
+        <form method="post" action="{{ url_for('main.update_exclusions') }}">
             <input type="hidden" name="obstime" value="{{ selected_obstime }}">
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover align-middle">
@@ -177,7 +177,7 @@
 {% endif %}
 
 {% if selected_rows %}
-<form id="derived_form" method="post" action="{{ url_for('select_single_entry') }}" class="mt-3">
+<form id="derived_form" method="post" action="{{ url_for('main.select_single_entry') }}" class="mt-3">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-success">Store Above Fit for Download?</button>
     </div>
@@ -190,12 +190,12 @@
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Derived Astrometric Correction</h5>
         <div class="d-flex gap-2">
-            <form method="post" action="{{ url_for('clear_derived') }}" class="d-inline">
+            <form method="post" action="{{ url_for('main.clear_derived') }}" class="d-inline">
                 <button type="submit" class="btn btn-sm btn-outline-danger">Clear All</button>
             </form>
             {% if derived_rows %}
-                <a class="btn btn-sm btn-success" href="{{ url_for('download_derived') }}">Download PSV</a>
-                <a class="btn btn-sm btn-outline-success" href="{{ url_for('download_derived_xml') }}">Download XML</a>
+                <a class="btn btn-sm btn-success" href="{{ url_for('main.download_derived') }}">Download PSV</a>
+                <a class="btn btn-sm btn-outline-success" href="{{ url_for('main.download_derived_xml') }}">Download XML</a>
             {% else %}
                 <button class="btn btn-sm btn-success" type="button" disabled title="No derived rows yet">Download PSV (|)</button>
                 <button class="btn btn-sm btn-outline-success" type="button" disabled title="No derived rows yet">Download XML</button>
@@ -214,7 +214,7 @@
         {% endif %}
         {% if derived_rows %}
             {% set cols = original_columns if original_columns else derived_columns %}
-            <form method="post" action="{{ url_for('delete_derived') }}">
+            <form method="post" action="{{ url_for('main.delete_derived') }}">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover align-middle">
                         <thead>
