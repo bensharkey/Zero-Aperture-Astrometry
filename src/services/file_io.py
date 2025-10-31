@@ -14,10 +14,23 @@ def allowed_file(filename: str) -> bool:
 def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
     """Read supported file types into a pandas DataFrame."""
     ext = filename.rsplit(".", 1)[1].lower()
-
+    
     try:
         if ext == "psv":
-            df = pd.read_csv(filepath, sep="|")
+            # Find header line: first line that begins with 'permID'
+            header_idx = None
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for i, line in enumerate(f):
+                    s = line.lstrip()  # tolerate leading whitespace/BOM
+                    if s.startswith('permID'):
+                        header_idx = i
+                        break
+            if header_idx is not None:
+                # Use detected header row directly
+                df = pd.read_csv(filepath, sep='|', header=header_idx, engine='python')
+            else:
+                # Fallback: assume header is the first line
+                df = pd.read_csv(filepath, sep='|')
         elif ext == "xml":
             df = pd.read_xml(filepath, xpath="./obsBlock/obsData/*")
         else:
@@ -27,13 +40,17 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
         raise
 
     df.rename(columns=lambda x: x.strip(), inplace=True)
+    # Drop rows with missing obsTime
     df = df.dropna(subset=["obsTime"])
 
+    # Convert required columns to numeric types
     df["ra"] = pd.to_numeric(df["ra"], errors="coerce")
     df["dec"] = pd.to_numeric(df["dec"], errors="coerce")
+    # Ensure photAp exists per strict format and coerce numeric for plotting
     if "photAp" not in df.columns:
         raise ValueError("Required column 'photAp' not found in uploaded file.")
     df["photAp"] = pd.to_numeric(df["photAp"], errors="coerce")
+
     return df
 
 
