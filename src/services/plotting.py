@@ -84,7 +84,7 @@ def generate_group_plots(
         dec0 = round(np.polyval(dec_fit, 0.0), int(dec_sig_figs))
         obs_time = str(output_row.get("obsTime", "Selected group"))
 
-        ra_y = np.cos(np.radians(dec0)) * (coords.ra.deg - ra0) * 3600
+        ra_y = np.cos(np.radians(dec0)) * (coords.ra.deg - np.median(coords.ra.deg)) * 3600
         ra_y_err = coords_rms.ra.arcsec
 
         ex_ra_y = ex_ra_y_err = ex_dec_y = ex_dec_y_err = ex_x = None
@@ -92,12 +92,12 @@ def generate_group_plots(
             ex_coords = SkyCoord(ra=excluded_subset["ra"], dec=excluded_subset["dec"], unit=u.deg, frame="icrs")
             ex_coords_rms = SkyCoord(ra=excluded_subset["rmsRA"], dec=excluded_subset["rmsDec"], unit=u.arcsec, frame="icrs")
             ex_x = excluded_subset["photAp"].astype(float)
-            ex_ra_y = np.cos(np.radians(dec0)) * (ex_coords.ra.deg - ra0) * 3600
+            ex_ra_y = np.cos(np.radians(dec0)) * (ex_coords.ra.deg - np.median(coords.ra.deg)) * 3600
             ex_ra_y_err = ex_coords_rms.ra.arcsec
-            ex_dec_y = (ex_coords.dec.deg - dec0) * 3600
+            ex_dec_y = (ex_coords.dec.deg  - np.median(coords.dec.deg)) * 3600
             ex_dec_y_err = ex_coords_rms.dec.arcsec
 
-        dec_y = (coords.dec.deg - dec0) * 3600
+        dec_y = (coords.dec.deg  - np.median(coords.dec.deg)) * 3600
         dec_y_err = coords_rms.dec.arcsec
 
         plot_x_extrapolate = np.append([0.0], x)
@@ -136,22 +136,22 @@ def generate_group_plots(
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharey=True)
         fig.suptitle(f"{obs_time} – Linear Fit")
         ax1.set_title(f"RA: ${ra0}^\\circ$")
-        ax1.errorbar(0, 0, ra0_ploterr, label="0 Aperture Extrapolation", fmt="o")
+        ax1.errorbar(0, (np.polyval(ra_fit, 0)  - np.median(coords.ra.deg)) * 3600, ra0_ploterr, label="0 Aperture Extrapolation", fmt="o")
         if ex_x is not None and ex_ra_y is not None and ex_ra_y_err is not None:
             ax1.errorbar(ex_x, ex_ra_y, ex_ra_y_err, label="Excluded RA data", fmt="s", c="r")
         ax1.errorbar(x, ra_y, ra_y_err, label="Included RA data", fmt="d", c="k", mew=3, zorder=10)
-        ax1.plot(x, (np.polyval(ra_fit, x) - ra0) * 3600, label="RA fit", color="k")
-        ax1.plot(plot_x_extrapolate, (np.polyval(ra_fit, plot_x_extrapolate) - ra0) * 3600, color="black", ls="--")
+        ax1.plot(x, (np.polyval(ra_fit, x)  - np.median(coords.ra.deg)) * 3600, label="RA fit", color="k")
+        ax1.plot(plot_x_extrapolate, (np.polyval(ra_fit, plot_x_extrapolate)  - np.median(coords.ra.deg)) * 3600, color="black", ls="--")
         ax1.set_ylabel(r"$\Delta$RA*cos(Dec) (arcseconds)")
         ax1.legend(loc=(1.1, 0.35))
 
         ax2.set_title(f"Dec: ${dec0}^\\circ$")
-        ax2.errorbar(0, 0, dec0_ploterr, label="0 Aperture Extrapolation", fmt="o")
+        ax2.errorbar(0, (np.polyval(dec_fit, 0)  - np.median(coords.dec.deg)) * 3600, dec0_ploterr, label="0 Aperture Extrapolation", fmt="o")
         if ex_x is not None and ex_dec_y is not None and ex_dec_y_err is not None:
             ax2.errorbar(ex_x, ex_dec_y, ex_dec_y_err, label="Excluded Dec data", fmt="s", c="r")
         ax2.errorbar(x, dec_y, dec_y_err, label="Included Dec data", fmt="s", c="k", mew=3, zorder=10)
-        ax2.plot(x, (np.polyval(dec_fit, x) - dec0) * 3600, label="Dec fit", color="black")
-        ax2.plot(plot_x_extrapolate, (np.polyval(dec_fit, plot_x_extrapolate) - dec0) * 3600, color="black", ls="--")
+        ax2.plot(x, (np.polyval(dec_fit, x)  - np.median(coords.dec.deg)) * 3600, label="Dec fit", color="black")
+        ax2.plot(plot_x_extrapolate, (np.polyval(dec_fit, plot_x_extrapolate)  - np.median(coords.dec.deg)) * 3600, color="black", ls="--")
         ax2.set_xlabel("Photometric Aperture (photAp)")
         ax2.set_ylabel(r"$\Delta$Dec (arcseconds)")
         ax2.legend(loc=(1.1, 0.35))
