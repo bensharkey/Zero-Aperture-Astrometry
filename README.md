@@ -41,7 +41,7 @@ Open http://127.0.0.1:5000 in your browser.
 
 ## Usage
 
-1. Upload an ADES `.psv` or `.xml` file.
+1. Upload an ADES `.psv` or `.xml` file. See examples directory for nonscientific psv and xml files that read correctly.
 2. Choose an `obsTime` group to analyze.
 3. In the table, use:
    - **Select Aperture** to pick the entry matching the stellar catalog extraction aperture/PSF used for the reference frame.
