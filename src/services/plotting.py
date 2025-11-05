@@ -133,7 +133,7 @@ def generate_group_plots(
         except Exception:  # pragma: no cover - fail silently for session persistence
             pass
 
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharey=True)
         fig.suptitle(f"{obs_time} – Linear Fit")
         ax1.set_title(f"RA: ${ra0}^\\circ$")
         ax1.errorbar(0, 0, ra0_ploterr, label="0 Aperture Extrapolation", fmt="o")
