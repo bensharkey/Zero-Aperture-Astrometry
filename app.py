@@ -1,8 +1,11 @@
 import os
 
+from asgiref.wsgi import WsgiToAsgi
+
 from src import create_app
 
 app = create_app()
+asgi_app = WsgiToAsgi(app)
 
 
 def _debug_enabled() -> bool:

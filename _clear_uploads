@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""
+Periodically clears the uploads directory, removing items older than one hour.
+"""
+
+from __future__ import annotations
+
+import os
+import shutil
+import time
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+ENV_FILE = SCRIPT_DIR / ".env"
+AGE_SECONDS = 60 * 60  # 1 hour
+DEFAULT_INTERVAL_HOURS = 24
+KEY_UPLOAD_FOLDER = "UPLOAD_FOLDER"
+
+
+def _parse_env_value(path: Path, key: str) -> str | None:
+    if not path.exists():
+        return None
+    for raw_line in path.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        if k.strip() != key:
+            continue
+        value = v.strip()
+        if (
+            len(value) >= 2
+            and value[0] == value[-1]
+            and value[0] in {'"', "'"}
+        ):
+            value = value[1:-1]
+        return value
+    return None
+
+
+def _resolve_upload_dir(raw_path: str | None) -> Path:
+    raw = raw_path or os.environ.get(KEY_UPLOAD_FOLDER)
+    if not raw:
+        raw = _parse_env_value(ENV_FILE, KEY_UPLOAD_FOLDER)
+    if not raw:
+        raw = "uploads"
+
+    path = Path(raw)
+    if not path.is_absolute():
+        path = (SCRIPT_DIR / path).resolve()
+    return path
+
+
+def _interval_seconds() -> int:
+    interval = os.environ.get("CLEAROUT_INTERVAL_HOURS")
+    if interval is None:
+        return int(DEFAULT_INTERVAL_HOURS * 3600)
+    try:
+        hours = float(interval)
+    except ValueError:
+        raise SystemExit(
+            f"CLEAROUT_INTERVAL_HOURS must be numeric (got '{interval}')"
+        )
+    return max(1, int(hours * 3600))
+
+
+def _prune_path(path: Path, cutoff: float) -> None:
+    try:
+        stats = path.stat()
+    except FileNotFoundError:
+        return
+    if stats.st_mtime > cutoff:
+        return
+    if path.is_dir():
+        shutil.rmtree(path, ignore_errors=True)
+    else:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def main() -> None:
+    upload_dir = _resolve_upload_dir(None)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    interval_seconds = _interval_seconds()
+    print(
+        f"Starting upload cleaner. Target='{upload_dir}' "
+        f"interval={interval_seconds}s prune_older_than={AGE_SECONDS // 60}m",
+        flush=True,
+    )
+
+    while True:
+        cutoff = time.time() - AGE_SECONDS
+        for child in upload_dir.iterdir():
+            _prune_path(child, cutoff)
+        time.sleep(interval_seconds)
+
+
+if __name__ == "__main__":
+    main()

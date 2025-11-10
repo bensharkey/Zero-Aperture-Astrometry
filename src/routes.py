@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import traceback
+from datetime import datetime
 from typing import Any, Optional
 
 import pandas as pd
@@ -29,6 +30,11 @@ from .services.plotting import generate_group_plots
 from .services.selection import apply_selection_modifiers, parse_row_indices
 
 main_bp = Blueprint("main", __name__)
+
+
+@main_bp.app_context_processor
+def inject_global_context() -> dict[str, Any]:
+    return {"current_year": datetime.utcnow().year}
 
 
 @main_bp.route("/", methods=["GET", "POST"])
@@ -179,6 +185,11 @@ def index():
         obstime_counts=obstime_counts,
         selected_count=selected_count_value,
     )
+
+
+@main_bp.route("/about", methods=["GET"])
+def about():
+    return render_template("about.html")
 
 
 @main_bp.route("/download", methods=["GET"])

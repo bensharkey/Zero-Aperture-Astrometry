@@ -9,7 +9,7 @@ from .config import Config
 def create_app(config_class: type[Config] = Config) -> Flask:
     """Application factory used by the CLI entry point."""
     base_dir = Path(__file__).resolve().parent.parent
-    template_dir = base_dir / "templates"
+    template_dir = base_dir / "src" / "templates"
     app = Flask(
         __name__,
         template_folder=str(template_dir),

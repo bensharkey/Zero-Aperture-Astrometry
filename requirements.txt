@@ -4,3 +4,6 @@ numpy>=1.21
 matplotlib>=3.4
 astropy>=5.0
 lxml>=4.6
+gunicorn>=21.2
+uvicorn>=0.30
+asgiref>=3.8

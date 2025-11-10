@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+ENV_FILE="${SCRIPT_DIR}/.env"
+if [[ -f "${ENV_FILE}" ]]; then
+    # shellcheck disable=SC1090
+    source "${ENV_FILE}"
+fi
+
+APP_NAME="${APP_NAME:-sbn-zaac}"
+PORT="${PORT:-8000}"
+FLASK_DEBUG="${FLASK_DEBUG:-0}"
+LIVE_GUNICORN_INSTANCES="${LIVE_GUNICORN_INSTANCES:--1}"
+
+export APP_NAME PORT FLASK_DEBUG LIVE_GUNICORN_INSTANCES
+
+CLEAR_SCRIPT="${SCRIPT_DIR}/_clear_uploads"
+if [[ -x "${CLEAR_SCRIPT}" ]]; then
+    "${CLEAR_SCRIPT}" &
+    CLEAR_PID=$!
+    echo "Started upload cleanup helper (pid=${CLEAR_PID})." >&2
+    disown "${CLEAR_PID}" 2>/dev/null || true
+fi
+
+exec gunicorn "app:asgi_app" \
+    --config ".gunicorn.config.py" \
+    --worker-class "uvicorn.workers.UvicornWorker" \
+    --name "${APP_NAME}" \
+    --bind "0.0.0.0:${PORT}" \
+    --access-logfile "-" \
+    --error-logfile "-" \
+    --log-level "info"

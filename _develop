@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Script to run the Flask development server with auto-reloading.
+# Requires nodemon; install it globally via `npm i -g nodemon`
+
+
+set -euo pipefail
+
+if ! command -v nodemon >/dev/null 2>&1; then
+  echo "nodemon is required but not installed. Install via 'npm i -g nodemon' or add it to your project." >&2
+  exit 1
+fi
+
+source .env
+
+export FLASK_APP=app.py
+export FLASK_ENV=development
+
+exec nodemon \
+  --watch src \
+  --watch app.py \
+  --ext py,html \
+  --signal SIGTERM \
+  --exec "python -m flask run --host 0.0.0.0 --port \${PORT:-5000}"

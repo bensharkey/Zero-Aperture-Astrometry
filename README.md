@@ -23,7 +23,7 @@ A Flask web app to derive zero-aperture astrometric corrections from ADES-format
 
 1. Create a virtual environment (recommended):
    ```bash
-   python -m venv venv
+   python3 -m venv venv
    source venv/bin/activate  # Windows: venv\Scripts\activate
    ```
 2. Install dependencies:
@@ -39,6 +39,19 @@ python app.py
 
 Open http://127.0.0.1:5000 in your browser.
 
+### Production via Docker Compose
+
+1. Build and start the stack in detached mode:
+   ```bash
+   docker-compose up -d
+   ```
+   This uses the provided `Dockerfile`, `_app_entry`, and `docker-compose.yml` to run Gunicorn/Uvicorn inside a container.
+2. Tail the service logs to verify startup:
+   ```bash
+   docker-compose logs -f web
+   ```
+   The `-f` flag stands for “follow”, causing the command to stream log output continuously (similar to `tail -f`). Omit `-f` if you only want a snapshot of existing logs.
+
 ## Usage
 
 1. Upload an ADES `.psv` or `.xml` file. See examples directory for nonscientific psv and xml files that read correctly.
@@ -51,6 +64,7 @@ Open http://127.0.0.1:5000 in your browser.
 6. Review and download the derived data as PSV or XML.
 
 Notes:
+
 - Derived rows are stored per-session under `uploads/derived_<token>.json`.
 - Column order is taken from the original uploaded file.
 - XML is formatted with indentation, one tag per line, with whitespace stripped from values.

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Helper script for dropping into the project container image built via docker compose.
+# Ensures the latest image is built, then starts an interactive bash shell.
+
+set -euo pipefail
+IFS=$'\n\t'
+
+SERVICE="web"
+COMPOSE_CMD="docker compose"
+
+if ! command -v docker &>/dev/null; then
+    echo "docker is required but not found in PATH" >&2
+    exit 1
+fi
+
+if ! ${COMPOSE_CMD} version &>/dev/null; then
+    COMPOSE_CMD="docker-compose"
+fi
+
+echo "Building ${SERVICE} image using ${COMPOSE_CMD}..."
+${COMPOSE_CMD} build "${SERVICE}"
+
+echo "Starting interactive shell inside ${SERVICE} container..."
+${COMPOSE_CMD} run --rm --entrypoint /bin/bash "${SERVICE}"
