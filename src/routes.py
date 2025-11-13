@@ -19,6 +19,7 @@ from .handlers import (
     select_rows,
     select_single_entry,
     set_modifiers,
+    reset_session,
     update_exclusions,
 )
 
@@ -36,9 +37,9 @@ main_bp.add_url_rule("/select_group", view_func=select_group, methods=["POST"])
 main_bp.add_url_rule("/download_selected", view_func=download_selected, methods=["GET"])
 main_bp.add_url_rule("/set_modifiers", view_func=set_modifiers, methods=["POST"])
 main_bp.add_url_rule("/clear_modifiers", view_func=clear_modifiers, methods=["POST"])
+main_bp.add_url_rule("/reset", view_func=reset_session, methods=["POST"])
 main_bp.add_url_rule("/select_single_entry", view_func=select_single_entry, methods=["POST"])
 main_bp.add_url_rule("/delete_derived", view_func=delete_derived, methods=["POST"])
 main_bp.add_url_rule("/clear_derived", view_func=clear_derived, methods=["POST"])
 main_bp.add_url_rule("/download_derived", view_func=download_derived, methods=["GET"])
 main_bp.add_url_rule("/download_derived_xml", view_func=download_derived_xml, methods=["GET"])
-

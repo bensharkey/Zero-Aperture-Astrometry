@@ -12,6 +12,7 @@ from .download_derived_xml import download_derived_xml
 from .download_selected import download_selected
 from .index import index
 from .inject_global_context import inject_global_context
+from .reset_session import reset_session
 from .select_group import select_group
 from .select_rows import select_rows
 from .select_single_entry import select_single_entry
@@ -31,6 +32,7 @@ __all__ = [
     "download_selected",
     "index",
     "inject_global_context",
+    "reset_session",
     "select_group",
     "select_rows",
     "select_single_entry",
