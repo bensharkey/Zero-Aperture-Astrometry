@@ -9,35 +9,34 @@
         {% endif %}
     </div>
     <div class="card-body">
-        <form method="post" enctype="multipart/form-data" class="mb-4">
+        <form id="upload-form" method="post" enctype="multipart/form-data" class="mb-3">
             <div class="mb-3">
                 <label for="file" class="form-label">
                     Choose a file to analyze <span class="text-muted">(supported formats: PSV, XML)</span>:
                 </label>
-                <div class="d-flex flex-wrap align-items-center gap-2 custom-file-picker">
-                    <label for="file" class="btn btn-outline-secondary mb-0">
-                        <i class="bi bi-folder2-open me-2"></i>Select File
-                    </label>
-                    <input type="file" class="visually-hidden" name="file" id="file"
-                          accept=".psv,.xml" required>
-                    <span class="badge bg-light text-dark text-wrap" id="file-status-text">
-                        {% if current_filename %}
-                            File chosen: {{ current_filename }}
-                        {% else %}
-                            No file chosen yet.
-                        {% endif %}
-                    </span>
+                <input type="file" class="visually-hidden" name="file" id="file"
+                      accept=".psv,.xml" required>
+                <div class="form-text fw-semibold mt-2" id="file-status-text">
+                    {% if current_filename %}
+                        File chosen: {{ current_filename }}
+                    {% else %}
+                        No file chosen yet.
+                    {% endif %}
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">
+        </form>
+        <form id="reset-form" method="post" action="{{ url_for('main.reset_session') }}"></form>
+        <div class="action-button-row d-flex flex-column gap-3 mb-4 align-items-stretch">
+            <label for="file" class="btn btn-outline-secondary mb-0 action-btn mx-auto">
+                <i class="bi bi-folder2-open me-2"></i>Select File
+            </label>
+            <button type="submit" class="btn btn-primary action-btn mx-auto" form="upload-form">
                 <i class="bi bi-upload me-2"></i>Upload and Analyze
             </button>
-        </form>
-        <form method="post" action="{{ url_for('main.reset_session') }}" class="mb-4">
-            <button type="submit" class="btn btn-danger">
+            <button type="submit" class="btn btn-danger action-btn mx-auto" form="reset-form">
                 <i class="bi bi-arrow-clockwise me-2"></i>Reset Session
             </button>
-        </form>
+        </div>
 
         {% set flashes = get_flashed_messages(with_categories=true) %}
         {% if flashes %}
@@ -304,11 +303,9 @@
     .card-header {
         border-radius: 0.5rem 0.5rem 0 0 !important;
     }
-    .custom-file-picker label.btn {
-        min-width: 150px;
-    }
-    .custom-file-picker #file-status-text {
-        font-weight: 600;
+    .action-button-row .action-btn {
+        width: 100%;
+        max-width: 400px;
     }
 </style>
 
