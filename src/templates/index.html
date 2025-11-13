@@ -11,11 +11,22 @@
     <div class="card-body">
         <form method="post" enctype="multipart/form-data" class="mb-4">
             <div class="mb-3">
-                <label for="file" class="form-label">Choose a file to analyze:</label>
-                <input type="file" class="form-control" name="file" id="file"
-                      accept=".psv,.xml" required>
-                <div class="form-text">
-                    Supported formats: PSV, XML
+                <label for="file" class="form-label">
+                    Choose a file to analyze <span class="text-muted">(supported formats: PSV, XML)</span>:
+                </label>
+                <div class="d-flex flex-wrap align-items-center gap-2 custom-file-picker">
+                    <label for="file" class="btn btn-outline-secondary mb-0">
+                        <i class="bi bi-folder2-open me-2"></i>Select File
+                    </label>
+                    <input type="file" class="visually-hidden" name="file" id="file"
+                          accept=".psv,.xml" required>
+                    <span class="badge bg-light text-dark text-wrap" id="file-status-text">
+                        {% if current_filename %}
+                            File chosen: {{ current_filename }}
+                        {% else %}
+                            No file chosen yet.
+                        {% endif %}
+                    </span>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">
@@ -255,6 +266,24 @@
 </div>
 {% endif %}
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.getElementById("file");
+        const statusText = document.getElementById("file-status-text");
+        if (!fileInput || !statusText) {
+            return;
+        }
+        const updateStatus = () => {
+            if (fileInput.files && fileInput.files.length > 0) {
+                statusText.textContent = `File chosen: ${fileInput.files[0].name}`;
+            } else {
+                statusText.textContent = "No file chosen yet.";
+            }
+        };
+        fileInput.addEventListener("change", updateStatus);
+    });
+</script>
+
 <style>
     .table {
         font-size: 0.9rem;
@@ -274,6 +303,12 @@
     }
     .card-header {
         border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+    .custom-file-picker label.btn {
+        min-width: 150px;
+    }
+    .custom-file-picker #file-status-text {
+        font-weight: 600;
     }
 </style>
 

@@ -51,6 +51,7 @@ def index():
                 file.save(filepath)
                 session["last_file_path"] = filepath
                 session["last_filename"] = filename
+                current_filename = filename
                 session.pop("selected_indices", None)
                 session.pop("selected_obstime", None)
 
