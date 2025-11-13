@@ -25,5 +25,5 @@ def update_exclusions():
             flash(f"Updated: picked row set and {len(exclude_ids)} exclusion(s) applied.", "exclusions")
         else:
             flash(f"Updated exclusions for obstime {obstime}: {len(exclude_ids)} row(s) excluded.", "exclusions")
+        session["fit_ready"] = True
     return redirect(url_for("main.index"))
-

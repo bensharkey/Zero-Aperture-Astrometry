@@ -32,6 +32,7 @@ def index():
     derived_rows = load_derived_rows()
     derived_columns = list(derived_rows[0].keys()) if derived_rows else None
     original_columns = session.get("original_columns")
+    fit_ready = session.get("fit_ready")
 
     if request.method == "POST":
         if "file" not in request.files:
@@ -54,6 +55,7 @@ def index():
                 current_filename = filename
                 session.pop("selected_indices", None)
                 session.pop("selected_obstime", None)
+                session["fit_ready"] = False
 
                 df = read_file_to_dataframe(filepath, filename)
                 available_obstimes, obstime_counts = build_obstime_info(df)
@@ -160,4 +162,5 @@ def index():
         selected_obstime=selected_obstime,
         obstime_counts=obstime_counts,
         selected_count=selected_count_value,
+        fit_ready=fit_ready,
     )

@@ -14,9 +14,10 @@ def select_group():
     value = request.form.get("selected_obstime")
     if value is None or value == "":
         session.pop("selected_obstime", None)
+        session["fit_ready"] = False
         flash("Cleared group selection.", "group")
     else:
         session["selected_obstime"] = value
+        session["fit_ready"] = False
         flash(f"Selected group obstime = {value}", "group")
     return redirect(url_for("main.index"))
-
