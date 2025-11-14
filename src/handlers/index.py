@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import traceback
+import uuid
 from typing import Any, Optional
 
 from flask import current_app, flash, redirect, render_template, request, session
@@ -46,18 +47,29 @@ def index():
 
         if file and allowed_file(file.filename):
             try:
-                filename = secure_filename(file.filename)
+                # safe original filename
+                orig_name = secure_filename(file.filename)
+                name, ext = os.path.splitext(orig_name)
+                # generate unique filename to avoid collisions
+                unique_name = f"{name}_{uuid.uuid4().hex}{ext}"
+
                 upload_folder = current_app.config["UPLOAD_FOLDER"]
-                filepath = os.path.join(upload_folder, filename)
+                # ensure upload folder exists
+                os.makedirs(upload_folder, exist_ok=True)
+
+                filepath = os.path.join(upload_folder, unique_name)
                 file.save(filepath)
+                # store paths/names: show original name in UI, keep saved unique name internally
                 session["last_file_path"] = filepath
-                session["last_filename"] = filename
-                current_filename = filename
+                session["last_filename"] = orig_name
+                session["saved_filename"] = unique_name
+                current_filename = orig_name
+
                 session.pop("selected_indices", None)
                 session.pop("selected_obstime", None)
                 session["fit_ready"] = False
 
-                df = read_file_to_dataframe(filepath, filename)
+                df = read_file_to_dataframe(filepath, orig_name)
                 available_obstimes, obstime_counts = build_obstime_info(df)
                 session["available_obstimes"] = available_obstimes
                 session["obstime_counts"] = obstime_counts

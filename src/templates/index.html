@@ -307,6 +307,49 @@
         width: 100%;
         max-width: 400px;
     }
+
+    /* Button color variables */
+    :root {
+        --select-file-color: #000000; /* default matches Bootstrap secondary */
+        --upload-btn-color: #3944a4; /* change this value to control the Upload and Analyze button color */
+        --reset-btn-color: #dc3545;  /* change this value to control the Reset Session button color */
+    }
+
+    /* Target the Select File label button */
+    label[for="file"].btn.btn-outline-secondary.action-btn {
+        color: var(--select-file-color);
+        border-color: var(--select-file-color);
+        background-color: transparent;
+    }
+    label[for="file"].btn.btn-outline-secondary.action-btn:hover,
+    label[for="file"].btn.btn-outline-secondary.action-btn:focus {
+        color: #fff;
+        background-color: var(--select-file-color);
+        border-color: var(--select-file-color);
+    }
+
+    /* Target the "Upload and Analyze" button (the button that submits the upload-form) */
+    button[form="upload-form"].btn.btn-primary.action-btn {
+        background-color: var(--upload-btn-color);
+        border-color: var(--upload-btn-color);
+    }
+    /* Hover/focus states */
+    button[form="upload-form"].btn.btn-primary.action-btn:hover,
+    button[form="upload-form"].btn.btn-primary.action-btn:focus {
+        background-color: color-mix(in srgb, var(--upload-btn-color) 90%, black 10%);
+        border-color: color-mix(in srgb, var(--upload-btn-color) 90%, black 10%);
+    }
+
+    /* Target the Reset Session button (the button that submits the reset-form) */
+    button[form="reset-form"].btn.btn-danger.action-btn {
+        background-color: var(--reset-btn-color);
+        border-color: var(--reset-btn-color);
+    }
+    button[form="reset-form"].btn.btn-danger.action-btn:hover,
+    button[form="reset-form"].btn.btn-danger.action-btn:focus {
+        background-color: color-mix(in srgb, var(--reset-btn-color) 90%, black 10%);
+        border-color: color-mix(in srgb, var(--reset-btn-color) 90%, black 10%);
+    }
 </style>
 
 <!-- Add Bootstrap Icons -->
