@@ -42,7 +42,8 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
     df.rename(columns=lambda x: x.strip(), inplace=True)
     # Drop rows with missing obsTime
     df = df.dropna(subset=["obsTime"])
-
+    
+    
     # Convert required columns to numeric types
     df["ra"] = pd.to_numeric(df["ra"], errors="coerce")
     df["dec"] = pd.to_numeric(df["dec"], errors="coerce")
@@ -50,7 +51,8 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
     if "photAp" not in df.columns:
         raise ValueError("Required column 'photAp' not found in uploaded file.")
     df["photAp"] = pd.to_numeric(df["photAp"], errors="coerce")
-
+    # Sort the frame by PhotAp
+    df = df.sort_values(by="photAp")
     return df
 
 
