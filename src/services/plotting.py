@@ -106,7 +106,10 @@ def generate_group_plots(
         output_row["dec"] = dec0
         output_row["rmsRA"] = ra0_err
         output_row["rmsDec"] = dec0_err
-        output_row["notes"] = "e" + output_row["notes"].str.strip()
+        # Ensure notes has no whitespace (remove spaces, tabs, newlines)
+        raw_notes = str(output_row.get("notes", ""))
+        cleaned_notes = "".join(raw_notes.split())
+        output_row["notes"] = "e" + cleaned_notes
 
         try:
             base_cols = [c for c in group.columns if c != "_row_id"]
