@@ -70,17 +70,17 @@ def generate_group_plots(
             dec_fit, _ = np.polyfit(x, coords.dec.deg, 1, cov="unscaled")
 
         rms_ra = float(output_row["rmsRA"])
-        raerr_sigfigs = abs(np.floor(np.log10(max(rms_ra * 2.0, 1e-12)))) + 1
-        ra0_err = round(rms_ra * 2.0, int(raerr_sigfigs))
+        #raerr_sigfigs = abs(np.floor(np.log10(max(rms_ra * 1.0, 1e-12)))) + 1
+        ra0_err = rms_ra * 2.0
         ra0_ploterr = ra0_err
-        ra_sig_figs = abs(np.floor(np.log10(max(ra0_ploterr / 3600.0, 1e-12)))) + 1
+        ra_sig_figs = 6 #abs(np.floor(np.log10(max(ra0_ploterr / 3600.0, 1e-12)))) + 1
         ra0 = round(np.polyval(ra_fit, 0.0), int(ra_sig_figs))
 
         rms_dec = float(output_row["rmsDec"])
-        decerr_sigfigs = abs(np.floor(np.log10(max(rms_dec * 2.0, 1e-12)))) + 1
-        dec0_err = round(rms_dec * 2.0, int(decerr_sigfigs))
+        #decerr_sigfigs = abs(np.floor(np.log10(max(rms_dec * 1.0, 1e-12)))) + 1
+        dec0_err = rms_dec * 2.0
         dec0_ploterr = dec0_err
-        dec_sig_figs = abs(np.floor(np.log10(max(dec0_ploterr / 3600.0, 1e-12)))) + 1
+        dec_sig_figs = 6 #abs(np.floor(np.log10(max(dec0_ploterr / 3600.0, 1e-12)))) + 1
         dec0 = round(np.polyval(dec_fit, 0.0), int(dec_sig_figs))
         obs_time = str(output_row.get("obsTime", "Selected group"))
 
