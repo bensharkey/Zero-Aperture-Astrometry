@@ -16,7 +16,7 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
     ext = filename.rsplit(".", 1)[1].lower()
     
     try:
-        if ext == "psv":
+        if ext == "psv" or ext == "txt":
             # Find header line: first line that begins with 'permID'
             header_idx = None
             with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
@@ -26,12 +26,16 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
                         header_idx = i
                         break
             if header_idx is not None:
-                # Use detected header row directly
-                df = pd.read_csv(filepath, sep='|', header=header_idx, engine='python')
+                # Use detected header row directly; read all columns as strings so
+                # original textual formatting (trailing zeros) is preserved.
+                df = pd.read_csv(filepath, sep='|', header=header_idx, engine='python', dtype=str)
             else:
                 # Fallback: assume header is the first line
-                df = pd.read_csv(filepath, sep='|')
+                df = pd.read_csv(filepath, sep='|', dtype=str)
         elif ext == "xml":
+            # pd.read_xml doesn't always provide fine-grained dtype control across
+            # versions. Read normally then ensure key columns are stored as strings
+            # to preserve original formatting.
             df = pd.read_xml(filepath, xpath="./obsBlock/obsData/*")
         else:
             raise ValueError(f"Unsupported file extension: {ext}")
@@ -43,10 +47,16 @@ def read_file_to_dataframe(filepath: str, filename: str) -> pd.DataFrame:
     # Drop rows with missing obsTime
     df = df.dropna(subset=["obsTime"])
     
-    
-    # Convert required columns to numeric types
-    df["ra"] = pd.to_numeric(df["ra"], errors="coerce")
-    df["dec"] = pd.to_numeric(df["dec"], errors="coerce")
+    # Preserve original textual formatting for spatial columns by storing
+    # them with pandas' string dtype. This keeps trailing zeros while leaving
+    # missing values as proper NA so downstream dropna() works correctly.
+    for col in ("ra", "dec", "rmsRA", "rmsDec"):
+        if col in df.columns:
+            try:
+                df[col] = df[col].astype("string")
+            except Exception:
+                # Fallback: coerce to string but keep NaN where present
+                df[col] = df[col].where(df[col].notna(), pd.NA).astype("string")
     # Ensure photAp exists per strict format and coerce numeric for plotting
     if "photAp" not in df.columns:
         raise ValueError("Required column 'photAp' not found in uploaded file.")
