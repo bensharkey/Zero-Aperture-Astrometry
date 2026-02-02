@@ -16,7 +16,7 @@ def download_derived_xml():
     try:
         cols = session.get("original_columns")
         df = pd.DataFrame(rows, columns=cols) if cols else pd.DataFrame(rows)
-        df = df.applymap(lambda v: "" if pd.isna(v) else (v.strip() if isinstance(v, str) else v))
+        df = df.map(lambda v: "" if pd.isna(v) else (v.strip() if isinstance(v, str) else v))
         xml_data = df.to_xml(index=False, root_name="obsData", row_name="optical")
 
         parsed = minidom.parseString(xml_data)

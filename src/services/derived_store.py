@@ -43,7 +43,7 @@ def format_psv_aligned(df: pd.DataFrame) -> str:
     """Return PSV text with padded columns for readability."""
     if df is None or df.empty:
         return ""
-    str_df = df.applymap(lambda v: "" if pd.isna(v) else str(v))
+    str_df = df.map(lambda v: "" if pd.isna(v) else str(v))
     widths = []
     for col in str_df.columns:
         col_width = max(len(str(col)), int(str_df[col].str.len().max() or 0))
