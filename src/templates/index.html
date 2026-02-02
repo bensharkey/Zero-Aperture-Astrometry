@@ -15,7 +15,7 @@
                     Choose a file to analyze <span class="text-muted">(supported formats: PSV, XML)</span>:
                 </label>
                 <input type="file" class="visually-hidden" name="file" id="file"
-                      accept=".psv,.xml,.txt" required>
+                      accept=".psv,.xml" required>
                 <div class="form-text fw-semibold mt-2" id="file-status-text">
                     {% if current_filename %}
                         File chosen: {{ current_filename }}

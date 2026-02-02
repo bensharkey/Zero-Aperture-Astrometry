@@ -4,7 +4,7 @@ A Flask web app to derive zero-aperture astrometric corrections from ADES-format
 
 ## Features
 
-- **ADES upload (PSV/XML)**: Accepts `.psv` and `.xml` ADES files only. `.txt` files are allowed and are assumed to be in psv format.
+- **ADES upload (PSV/XML)**: Accepts `.psv` and `.xml` ADES files only.
 - **Group selection by `obsTime`**: Smart, datetime-aware sorting and per-group counts.
 - **Pick and exclude**: Choose the calibration aperture entry; exclude points from fits.
 - **Plot with context**: Shows included points (black) and excluded points (red), with linear fits and zero-aperture extrapolation marker.
