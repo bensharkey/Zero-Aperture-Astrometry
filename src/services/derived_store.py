@@ -51,6 +51,6 @@ def format_psv_aligned(df: pd.DataFrame) -> str:
     header = "|".join(str(col).ljust(widths[i]) for i, col in enumerate(str_df.columns))
     lines = [header]
     for _, row in str_df.iterrows():
-        line = "|".join(str(row[i]).ljust(widths[i]) for i in range(len(widths)))
+        line = "|".join(str(row.loc[col]).ljust(widths[i]) for i, col in enumerate(str_df.columns))
         lines.append(line)
     return "\n".join(lines) + "\n"
